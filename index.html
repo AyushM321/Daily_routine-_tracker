@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#111827">
+<title>Daily Routine</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f4f6f8;color:#111827}
+.app{max-width:560px;margin:auto;min-height:100vh;padding:22px 16px 90px}
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}
+h1{font-size:28px;margin:0 0 4px}
+.subtitle{color:#6b7280;font-size:14px}
+.icon-btn{border:0;background:white;border-radius:14px;width:44px;height:44px;font-size:20px;box-shadow:0 3px 12px #0000000d}
+.card{background:white;border-radius:20px;padding:18px;margin-bottom:16px;box-shadow:0 5px 18px #0000000a}
+.progress-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.progress-number{font-size:26px;font-weight:800}
+.bar{height:11px;background:#e5e7eb;border-radius:99px;overflow:hidden}
+.fill{height:100%;width:0;background:#111827;border-radius:99px;transition:.25s}
+.section-title{display:flex;justify-content:space-between;align-items:center;margin:22px 3px 10px}
+.section-title h2{font-size:16px;margin:0}
+.section-title span{font-size:12px;color:#6b7280}
+.task{display:flex;align-items:center;gap:12px;padding:13px 4px;border-bottom:1px solid #f0f1f3}
+.task:last-child{border-bottom:0}
+.check{width:24px;height:24px;border:2px solid #cbd0d8;border-radius:8px;flex:none;cursor:pointer;display:grid;place-items:center;background:white}
+.task.done .check{background:#111827;border-color:#111827;color:white}
+.task.done .check:after{content:"✓";font-size:15px}
+.task-main{flex:1;cursor:pointer}
+.task-name{font-weight:650;font-size:15px}
+.task-time{font-size:12px;color:#8a9099;margin-top:3px}
+.task.done .task-name{text-decoration:line-through;color:#9298a2}
+.delete{border:0;background:transparent;color:#9ca3af;font-size:18px;cursor:pointer}
+.streak{display:flex;align-items:center;justify-content:space-between}
+.streak strong{font-size:26px}
+.actions{display:flex;gap:10px}
+button.primary{border:0;background:#111827;color:white;padding:12px 16px;border-radius:13px;font-weight:700;cursor:pointer}
+button.secondary{border:1px solid #e1e4e8;background:white;padding:12px 16px;border-radius:13px;font-weight:700;cursor:pointer}
+.empty{text-align:center;color:#8a9099;padding:18px}
+.modal{position:fixed;inset:0;background:#0007;display:none;align-items:flex-end;justify-content:center;padding:12px}
+.modal.show{display:flex}
+.sheet{background:white;width:min(560px,100%);border-radius:24px;padding:20px}
+input,select{width:100%;padding:13px;border:1px solid #dfe3e8;border-radius:12px;margin:7px 0 13px;font:inherit}
+label{font-size:13px;font-weight:700}
+.sheet-actions{display:flex;gap:10px;margin-top:8px}
+.sheet-actions button{flex:1}
+.small{font-size:12px;color:#8a9099}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <div>
+    <h1>Daily Routine</h1>
+    <div class="subtitle" id="date"></div>
+  </div>
+  <button class="icon-btn" id="addTop" aria-label="Add task">＋</button>
+</header>
+
+<div class="card">
+  <div class="progress-top">
+    <div><div class="subtitle">Today's Progress</div><div class="progress-number" id="percent">0%</div></div>
+    <div class="small" id="count">0/0 completed</div>
+  </div>
+  <div class="bar"><div class="fill" id="fill"></div></div>
+</div>
+
+<div id="routine"></div>
+
+<div class="card streak">
+  <div><div class="subtitle">Current streak</div><strong>🔥 <span id="streak">0</span> days</strong></div>
+  <div class="small">Keep going.</div>
+</div>
+
+<div class="actions">
+  <button class="primary" id="addBottom">＋ Add task</button>
+  <button class="secondary" id="reset">Reset today</button>
+</div>
+</div>
+
+<div class="modal" id="modal">
+ <div class="sheet">
+  <h2 style="margin:0 0 14px">Add routine task</h2>
+  <label>Task name</label>
+  <input id="taskName" placeholder="e.g. Mathematics">
+  <label>Time (optional)</label>
+  <input id="taskTime" type="time">
+  <label>Category</label>
+  <select id="taskCategory">
+   <option>🌅 Morning</option><option>📚 Study</option><option>💻 Skills</option>
+   <option>🏃 Fitness</option><option>🌙 Night</option>
+  </select>
+  <div class="sheet-actions">
+   <button class="secondary" id="cancel">Cancel</button>
+   <button class="primary" id="save">Add task</button>
+  </div>
+ </div>
+</div>
+
+<script>
+const KEY="dailyRoutineV1";
+const defaultTasks=[
+ {id:1,name:"Wake up",time:"07:00",cat:"🌅 Morning"},
+ {id:2,name:"Exercise",time:"07:30",cat:"🌅 Morning"},
+ {id:3,name:"Breakfast",time:"08:30",cat:"🌅 Morning"},
+ {id:4,name:"Mathematics",time:"10:00",cat:"📚 Study"},
+ {id:5,name:"Programming",time:"12:00",cat:"📚 Study"},
+ {id:6,name:"Revision",time:"16:00",cat:"📚 Study"},
+ {id:7,name:"Content creation",time:"17:00",cat:"💻 Skills"},
+ {id:8,name:"Graphic design",time:"18:00",cat:"💻 Skills"},
+ {id:9,name:"Review the day",time:"21:30",cat:"🌙 Night"},
+ {id:10,name:"Plan tomorrow",time:"22:00",cat:"🌙 Night"}
+];
+
+function todayKey(){return new Date().toISOString().slice(0,10)}
+function load(){return JSON.parse(localStorage.getItem(KEY)||"null")||{tasks:defaultTasks,done:{},history:{}}}
+let state=load(), key=todayKey();
+if(!state.done[key]) state.done[key]={};
+
+function save(){localStorage.setItem(KEY,JSON.stringify(state))}
+function fmtDate(){return new Intl.DateTimeFormat("en-IN",{weekday:"long",day:"numeric",month:"long",year:"numeric"}).format(new Date())}
+document.getElementById("date").textContent=fmtDate();
+
+function render(){
+ const root=document.getElementById("routine"); root.innerHTML="";
+ const groups=[...new Set(state.tasks.map(t=>t.cat))];
+ let total=state.tasks.length, completed=state.tasks.filter(t=>state.done[key][t.id]).length;
+ let pct=total?Math.round(completed/total*100):0;
+ document.getElementById("percent").textContent=pct+"%";
+ document.getElementById("count").textContent=`${completed}/${total} completed`;
+ document.getElementById("fill").style.width=pct+"%";
+ groups.forEach(cat=>{
+   const wrap=document.createElement("div");
+   wrap.innerHTML=`<div class="section-title"><h2>${cat}</h2><span>${state.tasks.filter(t=>t.cat===cat).length} tasks</span></div>`;
+   const card=document.createElement("div");card.className="card";
+   state.tasks.filter(t=>t.cat===cat).forEach(t=>{
+     const row=document.createElement("div");row.className="task"+(state.done[key][t.id]?" done":"");
+     row.innerHTML=`<div class="check"></div><div class="task-main"><div class="task-name">${escapeHtml(t.name)}</div><div class="task-time">${t.time||"No time set"}</div></div><button class="delete" title="Delete">×</button>`;
+     row.querySelector(".check").onclick=()=>toggle(t.id);
+     row.querySelector(".task-main").onclick=()=>toggle(t.id);
+     row.querySelector(".delete").onclick=()=>removeTask(t.id);
+     card.appendChild(row);
+   });
+   wrap.appendChild(card);root.appendChild(wrap);
+ });
+ if(!state.tasks.length) root.innerHTML='<div class="card empty">No tasks yet. Add your first routine.</div>';
+ document.getElementById("streak").textContent=calcStreak();
+ save();
+}
+function escapeHtml(s){return s.replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+function toggle(id){
+ state.done[key][id]=!state.done[key][id];
+ state.history[key]=state.done[key];
+ render();
+}
+function removeTask(id){
+ state.tasks=state.tasks.filter(t=>t.id!==id); delete state.done[key][id]; render();
+}
+function calcStreak(){
+ let n=0,d=new Date();
+ while(true){
+  const k=d.toISOString().slice(0,10), tasks=state.tasks;
+  if(!tasks.length || !tasks.every(t=>state.done[k]?.[t.id])) break;
+  n++; d.setDate(d.getDate()-1);
+ }
+ return n;
+}
+function openModal(){document.getElementById("modal").classList.add("show");document.getElementById("taskName").focus()}
+function closeModal(){document.getElementById("modal").classList.remove("show")}
+document.getElementById("addTop").onclick=openModal;
+document.getElementById("addBottom").onclick=openModal;
+document.getElementById("cancel").onclick=closeModal;
+document.getElementById("save").onclick=()=>{
+ const name=document.getElementById("taskName").value.trim();
+ if(!name)return;
+ state.tasks.push({id:Date.now(),name,time:document.getElementById("taskTime").value,cat:document.getElementById("taskCategory").value});
+ document.getElementById("taskName").value="";document.getElementById("taskTime").value="";
+ closeModal();render();
+};
+document.getElementById("reset").onclick=()=>{
+ if(confirm("Reset all completed tasks for today?")){state.done[key]={};render();}
+};
+document.getElementById("modal").onclick=e=>{if(e.target.id==="modal")closeModal()};
+render();
+</script>
+</body>
+</html>
