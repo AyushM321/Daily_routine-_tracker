@@ -1,8 +1,20 @@
 # DailyX
 
-## Version v1.2
+## Version v1.3
 
 DailyX is a mobile-first personal productivity PWA for routines, deadlines, streaks and progress.
+
+### v1.3 — UI Polish + Animation
+
+This release adds subtle, performance-friendly UI polish and animations without changing the existing data model or core workflows.
+
+- Smoother page entrance
+- Press/hover feedback on controls
+- Animated date cards
+- Smoother task/deadline appearance
+- Animated completion check
+- Smoother modal opening
+- Refined visual transitions
 
 ### v1.2 — Statistics & Dashboard
 
@@ -65,7 +77,7 @@ Replace these files with the v1.2 versions:
 4. Wait for GitHub Pages to deploy.
 5. Reopen/reload the DailyX PWA.
 
-If the old cached version remains, close the installed PWA completely and reopen it. The v1.2 service-worker cache is named `dailyx-v12`.
+If the old cached version remains, close the installed PWA completely and reopen it. The v1.3 service-worker cache is named `dailyx-v13`.
 
 ## Developer
 
