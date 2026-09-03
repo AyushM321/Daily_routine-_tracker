@@ -67,7 +67,7 @@ The project is designed as a Progressive Web App and includes:
 The main dashboard is designed around a simple flow:
 
 ```text
-Daily Routine v1.0
+Daily Routine v1.1
 
 Selected Date
 Daily Motivation
@@ -412,3 +412,15 @@ If you find the project useful, consider giving the repository a ⭐ on GitHub.
 
 > **You don't need to be perfect every day.  
 > You just need to keep showing up.**
+
+
+## v1.1 — Notifications & Reminders
+
+- Routine tasks can now have an optional reminder time.
+- Use **＋ → Enable notifications** to grant browser notification permission.
+- When a reminder is due, the PWA sends a notification with the task name.
+- Reminders follow the task's date or weekly repeat schedule.
+- Tapping a notification opens/focuses Daily Routine.
+- Reminder settings are stored with the task in local storage.
+
+**Important:** browser/PWA notifications are checked while the app is running. A static GitHub Pages app cannot guarantee exact background alarms when the app has been fully terminated.
