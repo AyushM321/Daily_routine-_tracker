@@ -59,7 +59,7 @@ label{display:block;color:var(--muted);font-size:12px;font-weight:750;margin-top
 </style>
 
 <style id="dailyx-v16-ui-polish">
-/* DailyX v1.8 — shared version source + update cache fix. Existing functionality preserved. */
+/* DailyX v1.9 — UI polish + animation. Existing functionality preserved. */
 @keyframes dxFadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 @keyframes dxSoftPop{0%{transform:scale(.97);opacity:.75}65%{transform:scale(1.015)}100%{transform:scale(1);opacity:1}}
 @keyframes dxCheck{0%{transform:scale(.78)}65%{transform:scale(1.12)}100%{transform:scale(1)}}
@@ -90,13 +90,35 @@ input:focus,select:focus,textarea:focus{
 }
 
 .version-history{animation:dxFadeUp .3s ease both}
+
+/* V1.9 UI polish */
+@keyframes dxGlow{0%,100%{box-shadow:0 0 0 0 rgba(156,255,87,0)}50%{box-shadow:0 0 0 6px rgba(156,255,87,.06)}}
+@keyframes dxBarGrow{from{transform:scaleX(0);transform-origin:left}to{transform:scaleX(1);transform-origin:left}}
+@keyframes dxRingIn{from{transform:scale(.94);opacity:.7}to{transform:scale(1);opacity:1}}
+
+.day-card,.deadline-list,.progress,.list,.panel-card,.stat-card{will-change:transform}
+.day-card:hover,.deadline-list:hover,.progress:hover,.list:hover,.panel-card:hover,.stat-card:hover{border-color:#303847}
+.day-card.selected{animation:dxGlow 2.4s ease-in-out infinite}
+.add:hover{box-shadow:0 8px 24px rgba(156,255,87,.18)}
+.streak{transition:transform .2s ease,box-shadow .2s ease}
+.streak:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(156,255,87,.08)}
+.fill{transform-origin:left center;animation:dxBarGrow .45s cubic-bezier(.22,1,.36,1) both}
+.week-bar{transform-origin:bottom;animation:dxBarGrow .5s cubic-bezier(.22,1,.36,1) both}
+.ring{animation:dxRingIn .45s cubic-bezier(.22,1,.36,1) both}
+.item:nth-child(1),.deadline-item:nth-child(1),.stat-card:nth-child(1){animation-delay:.02s}
+.item:nth-child(2),.deadline-item:nth-child(2),.stat-card:nth-child(2){animation-delay:.05s}
+.item:nth-child(3),.deadline-item:nth-child(3),.stat-card:nth-child(3){animation-delay:.08s}
+.item:nth-child(4),.deadline-item:nth-child(4),.stat-card:nth-child(4){animation-delay:.11s}
+.item:nth-child(5),.deadline-item:nth-child(5){animation-delay:.14s}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--a);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.app,.item,.deadline-item,.progress,.panel-card,.stat-card,.version-history,.modal.show .sheet,.modal.show .modal-content,.modal.show .dialog,.ring,.fill,.week-bar,.day-card.selected{animation:none!important}.day-card,button,.icon-btn,.add,.menu-btn,.check,.checkbox,input,select,textarea{transition:none!important}}
 </style>
 </head>
 <body>
 <div class="app" id="home">
 <header>
   <div class="brand">
-    <h1>DailyX</h1><span class="version" data-app-version>v1.8</span>
+    <h1>DailyX</h1><span class="version" data-app-version>v1.9</span>
     <div class="date" id="date" title="Tap to choose a date"></div>
     <div class="motivation" id="motivation"></div>
   </div>
@@ -162,14 +184,14 @@ input:focus,select:focus,textarea:focus{
       <div class="metric-row"><span>Upcoming deadlines</span><b id="mDeadlines">0</b></div>
     </div>
     <div class="panel-card version-history">
-      <div class="panel-title"><strong data-version-history-title>Version 1.8.1</strong><span>Latest update</span></div>
+      <div class="panel-title"><strong data-version-history-title>Version 1.9</strong><span>Latest update</span></div>
       <div class="version-list">
-        <div class="version-item">• Main page and Statistics page now use one shared app version</div>
-        <div class="version-item">• Version number is controlled from a single version file</div>
-        <div class="version-item">• Prevented the two pages from showing different versions</div>
-        <div class="version-item">• Updated PWA cache versioning to v1.8 for safer GitHub Pages updates</div>
-        <div class="version-item">• Preserved existing routines, deadlines, streaks, statistics, copy tasks and Local Storage data</div>
-        <div class="version-item">• Fixed a bug where editing a weekly task "for this date only" duplicated it instead of overriding it</div>
+        <div class="version-item">• Added smoother page, card, button and modal animations</div>
+        <div class="version-item">• Polished task, deadline, progress and statistics interactions</div>
+        <div class="version-item">• Added subtle staggered entrance motion for lists and dashboard cards</div>
+        <div class="version-item">• Improved focus, press and hover feedback without changing functionality</div>
+        <div class="version-item">• Added reduced-motion support for accessibility</div>
+        <div class="version-item">• Preserved existing routines, deadlines, 80% streak/cold-fire behavior, statistics, copy tasks and Local Storage data</div>
       </div>
     </div>
   </div>
@@ -308,7 +330,7 @@ render();
 </script>
 
 <script>
-/* DailyX v1.8 — shared version source; existing 80% streak rules preserved */
+/* DailyX v1.9 — shared version source; existing 80% streak rules preserved */
 function dxDayScore(d){
   const s = statsForDate(d);
   return s.total ? s.pct : null;
