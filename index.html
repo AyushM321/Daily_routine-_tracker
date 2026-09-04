@@ -61,7 +61,7 @@ label{display:block;color:var(--muted);font-size:12px;font-weight:750;margin-top
 <div class="app" id="home">
 <header>
   <div class="brand">
-    <h1>DailyX</h1><span class="version">v1.3</span>
+    <h1>DailyX</h1><span class="version">v1.4</span>
     <div class="date" id="date" title="Tap to choose a date"></div>
     <div class="motivation" id="motivation"></div>
   </div>
@@ -194,11 +194,7 @@ function delTaskNow(id){S.tasks=S.tasks.filter(x=>x.id!==id);save();close();rend
 function deleteDeadline(id){$('sheet').innerHTML='<h2>Delete deadline?</h2><div class="actions"><button class="secondary" onclick="close()">Cancel</button><button class="delete primary" onclick="delDeadlineNow(\''+id+'\')">Delete</button></div>'}
 function delDeadlineNow(id){S.deadlines=S.deadlines.filter(x=>x.id!==id);save();close();render()}
 
-function streak(){
- let n=0,d=new Date(D);
- for(let i=0;i<366;i++){let k=dateKey(d),ts=S.tasks.filter(t=>(t.repeat&&!t.date&&t.weekday===d.getDay())||t.date===k);if(!ts.length||!ts.every(t=>S.done[k]?.[t.id]))break;n++;d.setDate(d.getDate()-1)}
- return n
-}
+function streak(){ return dxStreakState().value; }
 function visibleTasks(){let k=dateKey(selected);return S.tasks.filter(t=>(t.repeat&&!t.date&&t.weekday===selected.getDay())||t.date===k)}
 function renderStrip(){
  let center=new Date(selected),cards=[];for(let i=-3;i<=3;i++){let d=new Date(center);d.setDate(d.getDate()+i);cards.push(d)}
@@ -230,7 +226,7 @@ function allStats(){
  return {totalOcc,doneOcc,allDone,best,rate:totalOcc?Math.round(doneOcc/totalOcc*100):0}
 }
 function renderStats(){
- let a=allStats();$('stCurrent').textContent=streak();$('stBest').textContent=a.best;$('stDone').textContent=a.allDone;$('stRate').textContent=a.rate+'%';
+ let a=allStats();$('stCurrent').textContent=dxStreakState().value;$('stBest').textContent=a.best;$('stDone').textContent=a.allDone;$('stRate').textContent=a.rate+'%';
  let days=[],total7=0;for(let i=6;i>=0;i--){let d=new Date(D);d.setDate(D.getDate()-i);let s=statsForDate(d);days.push({d,s});total7+=s.done}
  $('weekTotal').textContent=total7+' completed';
  $('weekChart').innerHTML=days.map(x=>`<div class="bar-col"><div class="bar-value">${x.s.pct}%</div><div class="bar-wrap"><div class="week-bar" style="height:${Math.max(4,x.s.pct)}%"></div></div><div class="bar-label">${W[x.d.getDay()].slice(0,3)}</div></div>`).join('');
@@ -251,7 +247,7 @@ function render(){
  $('n').textContent=ts.length+' routine'+(ts.length===1?'':'s');$('list').innerHTML='';
  if(!arr.length)$('list').innerHTML='<div class="empty"><b>No routine yet</b>Tap + to add your first task.</div>';
  arr.forEach(a=>{let x=a.x,r=document.createElement('div');r.className='item '+(done(x.id)?'done':'');r.innerHTML=`<div class="check"></div><div class="body"><div class="title">${esc(x.title)}</div><div class="time">${fmtTime(x.start)}${x.end?' to '+fmtTime(x.end):''}${x.date&&!x.repeat?' · This date only':''}</div></div><button class="more">⋮</button>`;r.querySelector('.check').onclick=()=>toggle(x.id);r.querySelector('.body').onclick=()=>taskForm(x.id);r.querySelector('.more').onclick=()=>actionMenu('task',x.id);$('list').appendChild(r)});
- let c=ts.filter(t=>done(t.id)).length,p=ts.length?Math.round(c/ts.length*100):0;$('pct').textContent=p+'%';$('count').textContent=c+'/'+ts.length+' completed';$('fill').style.width=p+'%';$('streak').textContent=streak();save()
+ let c=ts.filter(t=>done(t.id)).length,p=ts.length?Math.round(c/ts.length*100):0;$('pct').textContent=p+'%';$('count').textContent=c+'/'+ts.length+' completed';$('fill').style.width=p+'%';let dxss=dxStreakState(); $('streak').textContent=dxss.value; if($('streak').parentElement) $('streak').parentElement.firstChild.textContent=dxss.cold?'🥶 ':'🔥 ';save()
 }
 
 $('add').onclick=open;$('menuBtn').onclick=openStats;$('statsBack').onclick=closeStats;
@@ -261,6 +257,48 @@ $('calendar').onchange=e=>{if(e.target.value)selectDate(parseKey(e.target.value)
 $('todayBtn').onclick=()=>selectDate(new Date(D));
 if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
 render();
+</script>
+
+<script>
+/* DailyX v1.4 — 80% streak rules */
+function dxDayScore(d){
+  const s = statsForDate(d);
+  return s.total ? s.pct : null;
+}
+function dxStreakState(){
+  const today = new Date(D); today.setHours(0,0,0,0);
+  const todayScore = dxDayScore(today);
+  const prev = new Date(today); prev.setDate(prev.getDate()-1);
+  const prevScore = dxDayScore(prev);
+
+  let previousRun = 0, d = new Date(prev);
+  for(let i=0;i<366;i++){
+    const s = dxDayScore(d);
+    if(s === null){ d.setDate(d.getDate()-1); continue; }
+    if(s >= 80){ previousRun++; d.setDate(d.getDate()-1); }
+    else break;
+  }
+
+  if(todayScore !== null && todayScore >= 80){
+    let run = 1, x = new Date(prev);
+    for(let i=0;i<366;i++){
+      const s = dxDayScore(x);
+      if(s === null){ x.setDate(x.getDate()-1); continue; }
+      if(s >= 80){ run++; x.setDate(x.getDate()-1); }
+      else break;
+    }
+    return {value:run, cold:false, reset:false};
+  }
+
+  if(todayScore !== null && todayScore < 80 && previousRun > 0)
+    return {value:previousRun, cold:true, reset:false};
+
+  if(todayScore !== null && todayScore < 80 &&
+     prevScore !== null && prevScore < 80)
+    return {value:0, cold:false, reset:true};
+
+  return {value:previousRun, cold:false, reset:false};
+}
 </script>
 </body>
 </html>
