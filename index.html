@@ -162,13 +162,14 @@ input:focus,select:focus,textarea:focus{
       <div class="metric-row"><span>Upcoming deadlines</span><b id="mDeadlines">0</b></div>
     </div>
     <div class="panel-card version-history">
-      <div class="panel-title"><strong data-version-history-title>Version 1.8</strong><span>Latest update</span></div>
+      <div class="panel-title"><strong data-version-history-title>Version 1.8.1</strong><span>Latest update</span></div>
       <div class="version-list">
         <div class="version-item">• Main page and Statistics page now use one shared app version</div>
         <div class="version-item">• Version number is controlled from a single version file</div>
         <div class="version-item">• Prevented the two pages from showing different versions</div>
         <div class="version-item">• Updated PWA cache versioning to v1.8 for safer GitHub Pages updates</div>
         <div class="version-item">• Preserved existing routines, deadlines, streaks, statistics, copy tasks and Local Storage data</div>
+        <div class="version-item">• Fixed a bug where editing a weekly task "for this date only" duplicated it instead of overriding it</div>
       </div>
     </div>
   </div>
@@ -242,7 +243,7 @@ function deleteDeadline(id){$('sheet').innerHTML='<h2>Delete deadline?</h2><div 
 function delDeadlineNow(id){S.deadlines=S.deadlines.filter(x=>x.id!==id);save();close();render()}
 
 function streak(){ return dxStreakState().value; }
-function visibleTasks(){let k=dateKey(selected);return S.tasks.filter(t=>(t.repeat&&!t.date&&t.weekday===selected.getDay())||t.date===k)}
+function visibleTasks(){let k=dateKey(selected);let overridden=new Set(S.tasks.filter(t=>t.date===k&&t.source).map(t=>t.source));return S.tasks.filter(t=>(t.repeat&&!t.date&&t.weekday===selected.getDay()&&!overridden.has(t.id))||t.date===k)}
 function renderStrip(){
  let center=new Date(selected),cards=[];for(let i=-3;i<=3;i++){let d=new Date(center);d.setDate(d.getDate()+i);cards.push(d)}
  $('dateStrip').innerHTML=cards.map(d=>`<button class="day-card ${same(d,selected)?'selected':''}" data-k="${dateKey(d)}"><span class="dow">${W[d.getDay()].slice(0,3).toUpperCase()}</span><span class="num">${d.getDate()}</span></button>`).join('');
