@@ -57,12 +57,46 @@ label{display:block;color:var(--muted);font-size:12px;font-weight:750;margin-top
 .no-stats{color:var(--muted);font-size:12px;text-align:center;padding:18px}
 @media(max-width:520px){.info-grid{gap:10px}.progress{padding:15px}.pct{font-size:35px}.stat-grid{gap:8px}.stat-card{padding:14px}.stat-card .v{font-size:24px}.top-actions .icon-btn{display:block}}
 </style>
+
+<style id="dailyx-v16-ui-polish">
+/* DailyX v1.6 — UI polish + animation. Existing functionality preserved. */
+@keyframes dxFadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes dxSoftPop{0%{transform:scale(.97);opacity:.75}65%{transform:scale(1.015)}100%{transform:scale(1);opacity:1}}
+@keyframes dxCheck{0%{transform:scale(.78)}65%{transform:scale(1.12)}100%{transform:scale(1)}}
+@keyframes dxShimmer{0%{opacity:.55}50%{opacity:1}100%{opacity:.55}}
+
+.app{animation:dxFadeUp .35s ease both}
+.day-card{transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease,background .18s ease}
+.day-card:hover{transform:translateY(-2px)}
+.day-card:active{transform:scale(.97)}
+
+button,.icon-btn,.add,.menu-btn{transition:transform .16s ease,box-shadow .16s ease,opacity .16s ease,background .16s ease}
+button:active,.icon-btn:active,.add:active,.menu-btn:active{transform:scale(.95)}
+
+.item,.deadline-item,.progress,.panel-card,.stat-card,.breakdown-item{
+  animation:dxFadeUp .25s ease both;
+}
+
+.check,.checkbox{transition:transform .16s ease,box-shadow .16s ease}
+.done .check,.done .checkbox{animation:dxCheck .22s ease both}
+
+.modal.show .sheet,.modal.show .modal-content,.modal.show .dialog{
+  animation:dxSoftPop .22s ease both;
+}
+
+input,select,textarea{transition:border-color .16s ease,box-shadow .16s ease}
+input:focus,select:focus,textarea:focus{
+  box-shadow:0 0 0 3px rgba(255,255,255,.05);
+}
+
+.version-history{animation:dxFadeUp .3s ease both}
+</style>
 </head>
 <body>
 <div class="app" id="home">
 <header>
   <div class="brand">
-    <h1>DailyX</h1><span class="version">v1.5</span>
+    <h1>DailyX</h1><span class="version">v1.6</span>
     <div class="date" id="date" title="Tap to choose a date"></div>
     <div class="motivation" id="motivation"></div>
   </div>

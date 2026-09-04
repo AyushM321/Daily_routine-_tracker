@@ -1,6 +1,6 @@
 # DailyX
 
-## Version v1.5
+## Version v1.6
 
 DailyX is a mobile-first personal productivity PWA for routines, deadlines, streaks, progress and statistics.
 
@@ -73,3 +73,15 @@ If the old cached version remains, close the installed PWA completely and reopen
 **AyushXO**
 
 Discipline. Consistency. Progress.
+
+
+### v1.6 — UI Polish + Animation
+
+- Added subtle page entrance animation.
+- Added smoother hover/press feedback for controls.
+- Added smoother date-card interactions.
+- Added task/deadline entrance transitions.
+- Added completion-check animation.
+- Added smoother modal opening animation.
+- Added refined input focus transitions.
+- Preserved all existing DailyX functionality and saved data.
