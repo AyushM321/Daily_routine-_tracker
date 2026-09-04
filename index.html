@@ -59,7 +59,7 @@ label{display:block;color:var(--muted);font-size:12px;font-weight:750;margin-top
 </style>
 
 <style id="dailyx-v16-ui-polish">
-/* DailyX v1.6 — UI polish + animation. Existing functionality preserved. */
+/* DailyX v1.8 — shared version source + update cache fix. Existing functionality preserved. */
 @keyframes dxFadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 @keyframes dxSoftPop{0%{transform:scale(.97);opacity:.75}65%{transform:scale(1.015)}100%{transform:scale(1);opacity:1}}
 @keyframes dxCheck{0%{transform:scale(.78)}65%{transform:scale(1.12)}100%{transform:scale(1)}}
@@ -96,7 +96,7 @@ input:focus,select:focus,textarea:focus{
 <div class="app" id="home">
 <header>
   <div class="brand">
-    <h1>DailyX</h1><span class="version">v1.6</span>
+    <h1>DailyX</h1><span class="version" data-app-version>v1.8</span>
     <div class="date" id="date" title="Tap to choose a date"></div>
     <div class="motivation" id="motivation"></div>
   </div>
@@ -162,19 +162,21 @@ input:focus,select:focus,textarea:focus{
       <div class="metric-row"><span>Upcoming deadlines</span><b id="mDeadlines">0</b></div>
     </div>
     <div class="panel-card version-history">
-      <div class="panel-title"><strong>Version 1.5</strong><span>Latest update</span></div>
+      <div class="panel-title"><strong data-version-history-title>Version 1.8</strong><span>Latest update</span></div>
       <div class="version-list">
-        <div class="version-item">• Added the Version History section to the Statistics page</div>
-        <div class="version-item">• Version history now identifies the current app version</div>
-        <div class="version-item">• Added a clear record of the changes introduced in each update</div>
-        <div class="version-item">• Preserved all existing v1.4 streak, statistics, routines and deadline functionality</div>
-        <div class="version-item">• Preserved existing saved Local Storage data</div>
+        <div class="version-item">• Main page and Statistics page now use one shared app version</div>
+        <div class="version-item">• Version number is controlled from a single version file</div>
+        <div class="version-item">• Prevented the two pages from showing different versions</div>
+        <div class="version-item">• Updated PWA cache versioning to v1.8 for safer GitHub Pages updates</div>
+        <div class="version-item">• Preserved existing routines, deadlines, streaks, statistics, copy tasks and Local Storage data</div>
       </div>
     </div>
   </div>
 </div>
 
 <div class="modal" id="modal"><div class="sheet" id="sheet"></div></div>
+
+<script src="./version.js"></script>
 
 <script>
 const K='routineV3',oldK='dailyRoutineV1',W=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
@@ -305,7 +307,7 @@ render();
 </script>
 
 <script>
-/* DailyX v1.5 — version history update; existing 80% streak rules preserved */
+/* DailyX v1.8 — shared version source; existing 80% streak rules preserved */
 function dxDayScore(d){
   const s = statsForDate(d);
   return s.total ? s.pct : null;
@@ -344,6 +346,12 @@ function dxStreakState(){
 
   return {value:previousRun, cold:false, reset:false};
 }
+</script>
+
+<script>
+  document.querySelectorAll('[data-app-version]').forEach(el => el.textContent = APP_VERSION);
+  const vh = document.querySelector('[data-version-history-title]');
+  if (vh) vh.textContent = `Version ${APP_VERSION.replace(/^v/i,'')}`;
 </script>
 </body>
 </html>
