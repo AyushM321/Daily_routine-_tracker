@@ -1,45 +1,32 @@
 # DailyX
 
-## Version v1.4
+## Version v1.5
 
-DailyX is a mobile-first personal productivity PWA for routines, deadlines, streaks and progress.
+DailyX is a mobile-first personal productivity PWA for routines, deadlines, streaks, progress and statistics.
 
-### v1.4 — UI Polish + Animation
+### v1.5 — Version History
 
-This release adds subtle, performance-friendly UI polish and animations without changing the existing data model or core workflows.
+This release adds the version-history section requested for the Statistics page while preserving the existing v1.4 functionality.
 
-- Smoother page entrance
-- Press/hover feedback on controls
-- Animated date cards
-- Smoother task/deadline appearance
-- Animated completion check
-- Smoother modal opening
-- Refined visual transitions
+- Added a **Version 1.5** update-history card at the bottom of the Statistics page.
+- The card describes the changes introduced in the current version.
+- Existing 80% streak/cold-fire rules remain unchanged.
+- Existing Statistics & Dashboard, routines, deadlines, copy-task functionality and saved Local Storage data remain unchanged.
+- Future updates continue the version sequence automatically: v1.6, v1.7, v1.8, etc.
 
-### v1.2 — Statistics & Dashboard
+### Version history rule
 
-This release adds a dedicated **Statistics** screen.
+For every future app update, increment the app version automatically:
 
-Open it from the **☰ menu button** on the Home screen.
+`v1.4 → v1.5 → v1.6 → v1.7 ...`
 
-It includes:
-
-- Current streak
-- Best streak
-- Total recorded task completions
-- Overall completion rate
-- Last 7 days productivity chart
-- Overall progress ring
-- Total routine schedules
-- Weekly routine count
-- Date-only routine count
-- Upcoming deadline count
+The Statistics page's version-history section should always identify the current version and describe that version's changes.
 
 ### Data safety
 
-The app continues using the existing `routineV3` Local Storage key. The v1.2 statistics feature reads the existing routine and completion data; it does not intentionally reset or migrate your saved routines.
+The app continues using the existing `routineV3` Local Storage key. The statistics and version-history UI does not intentionally reset or migrate saved routines.
 
-Existing features remain:
+### Existing features
 
 - DailyX branding
 - Date selection
@@ -48,21 +35,23 @@ Existing features remain:
 - Date-only routines
 - Deadline management
 - Progress tracking
-- Streak tracking
+- 80% streak tracking
 - Copy weekly tasks
+- Statistics & Dashboard
+- Version history
 - PWA installation
 - Service-worker caching
 - `Made by AyushXO 😅` footer
 
 ## Files
 
-Keep the existing icon files from your repository:
+Keep the existing icon files from the repository:
 
 - `icon.svg`
 - `icon-192.png`
 - `icon-512.png`
 
-Replace these files with the v1.2 versions:
+The main app files are:
 
 - `index.html`
 - `manifest.json`
@@ -77,14 +66,10 @@ Replace these files with the v1.2 versions:
 4. Wait for GitHub Pages to deploy.
 5. Reopen/reload the DailyX PWA.
 
-If the old cached version remains, close the installed PWA completely and reopen it. The v1.4 service-worker cache is named `dailyx-v13`.
+If the old cached version remains, close the installed PWA completely and reopen it.
 
 ## Developer
 
 **AyushXO**
 
 Discipline. Consistency. Progress.
-
-
-### v1.4 — 80% Streak System
-80%+ completion counts as a successful day; one sub-80% day becomes cold fire (🥶), the next successful day starts a new streak, and two consecutive sub-80% days reset the current streak. Best streak is preserved.
