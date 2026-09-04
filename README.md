@@ -1,86 +1,15 @@
-# DailyX
+# Daily Routine Tracker
 
-## Version v1.3
+A private, free, mobile-friendly routine tracker.
 
-DailyX is a mobile-first personal productivity PWA for routines, deadlines, streaks and progress.
+## Run it
+Open `index.html` in a browser. Your tasks and completion status are saved locally on your device using localStorage.
 
-### v1.3 — UI Polish + Animation
+## Add to Android home screen
+Open the page in Chrome → menu (⋮) → Add to Home screen / Install app.
 
-This release adds subtle, performance-friendly UI polish and animations without changing the existing data model or core workflows.
+No account or server is required.
 
-- Smoother page entrance
-- Press/hover feedback on controls
-- Animated date cards
-- Smoother task/deadline appearance
-- Animated completion check
-- Smoother modal opening
-- Refined visual transitions
 
-### v1.2 — Statistics & Dashboard
-
-This release adds a dedicated **Statistics** screen.
-
-Open it from the **☰ menu button** on the Home screen.
-
-It includes:
-
-- Current streak
-- Best streak
-- Total recorded task completions
-- Overall completion rate
-- Last 7 days productivity chart
-- Overall progress ring
-- Total routine schedules
-- Weekly routine count
-- Date-only routine count
-- Upcoming deadline count
-
-### Data safety
-
-The app continues using the existing `routineV3` Local Storage key. The v1.2 statistics feature reads the existing routine and completion data; it does not intentionally reset or migrate your saved routines.
-
-Existing features remain:
-
-- DailyX branding
-- Date selection
-- Daily routines
-- Weekly recurring routines
-- Date-only routines
-- Deadline management
-- Progress tracking
-- Streak tracking
-- Copy weekly tasks
-- PWA installation
-- Service-worker caching
-- `Made by AyushXO 😅` footer
-
-## Files
-
-Keep the existing icon files from your repository:
-
-- `icon.svg`
-- `icon-192.png`
-- `icon-512.png`
-
-Replace these files with the v1.2 versions:
-
-- `index.html`
-- `manifest.json`
-- `sw.js`
-- `README.md`
-
-## GitHub Pages
-
-1. Open the repository.
-2. Upload/replace the four files above in the repository root.
-3. Commit the changes.
-4. Wait for GitHub Pages to deploy.
-5. Reopen/reload the DailyX PWA.
-
-If the old cached version remains, close the installed PWA completely and reopen it. The v1.3 service-worker cache is named `dailyx-v13`.
-
-## Developer
-
-**AyushXO**
-
-Discipline. Consistency. Progress.
+## v1.4 — 80% Streak System
+80% or higher completion counts as a successful day. One day below 80% puts the current streak into cold-fire recovery (🥶). A successful next day starts a new streak. Two consecutive days below 80% reset the current streak to 0. Best streak uses the 80% threshold and is preserved.
